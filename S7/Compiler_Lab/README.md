@@ -28,6 +28,9 @@ This repository contains implementations of all 16 experiments in the Compiler D
 - **[Exp15_Intermediate_Code_Generation](./Exp15_Intermediate_Code_Generation)**: Intermediate Three-Address Code (TAC) and Quadruple table generation
 - **[Exp16_Target_Code_Generation](./Exp16_Target_Code_Generation)**: Target machine code (Assembly) generation from TAC
 
+### EXTRA: Continuous Evaluation LEX Programs
+- **[Extra_LEX_Programms](./Extra_LEX_Programms)**: Additional 14 LEX programs covering Set 1 and Set 2 (simple/compound sentences, word operations, numerical processing, palindrome, Armstrong numbers, password validation, etc.)
+
 ---
 
 ## Compilation & Run Commands
@@ -143,3 +146,12 @@ This repository contains implementations of all 16 experiments in the Compiler D
     gcc target_code_gen.c -o target_code_gen
     ./target_code_gen
     ```
+
+### Extra LEX Programs
+Refer to **[Extra_LEX_Programms/README.md](./Extra_LEX_Programms/README.md)** for individual instructions for all 14 programs across Set 1 and Set 2.
+To compile and test all 14 extra programs in a single step:
+```bash
+cd Extra_LEX_Programms
+bash build_and_test.sh
+```
+
