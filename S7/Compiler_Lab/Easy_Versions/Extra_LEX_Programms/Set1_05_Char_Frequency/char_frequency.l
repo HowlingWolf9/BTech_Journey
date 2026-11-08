@@ -7,7 +7,10 @@ ALGORITHM:
 2. Define Lex rules:
    - '\n' : return 0 to stop scanning on newline.
    - .    : if yytext[0] matches ch, increment freq.
-3. In main(), read target character ch, prompt for sentence, invoke yylex(), and print frequency.
+3. In main():
+   - Read target character ch and flush the remaining line buffer.
+   - Prompt for sentence and invoke yylex().
+   - Print the frequency of ch.
 */
 #include <stdio.h>
 char ch;
@@ -24,7 +27,7 @@ int freq = 0;
 int main(void) {
     printf("Enter character: ");
     scanf(" %c", &ch);
-    getchar();
+    while (getchar() != '\n');
     printf("Enter sentence: ");
     yylex();
     printf("Frequency of '%c': %d\n", ch, freq);

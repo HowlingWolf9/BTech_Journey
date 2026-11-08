@@ -5,7 +5,6 @@ ALGORITHM:
 1. Read number of productions n and grammar productions of the form A=alpha (use '#' for epsilon).
 2. For each non-terminal c:
    - If c is terminal, FIRST(c) = {c}.
-   - If c -> '#', add '#' to FIRST(c).
    - If c -> Y1 Y2 ... Yk:
      * Add all non-epsilon symbols from FIRST(Y1) to FIRST(c).
      * If FIRST(Y1) contains '#', continue with Y2, and so on.
@@ -28,21 +27,19 @@ void first(char c, char *res) {
     if (!isupper(c)) { add(res, c); return; }
     for (int i = 0; i < n; i++) {
         if (p[i][0] == c) {
-            if (p[i][2] == '#') add(res, '#');
-            else {
-                for (int j = 2; p[i][j]; j++) {
-                    char sub[20] = "";
-                    first(p[i][j], sub);
-                    for (int k = 0; sub[k]; k++) if (sub[k] != '#') add(res, sub[k]);
-                    if (!strchr(sub, '#')) break;
-                    if (!p[i][j+1]) add(res, '#');
-                }
+            char *rhs = strchr(p[i], '=');
+            for (char *r = rhs ? rhs + 1 : p[i] + 2; *r; r++) {
+                char sub[20] = "";
+                first(*r, sub);
+                for (int k = 0; sub[k]; k++) if (sub[k] != '#') add(res, sub[k]);
+                if (!strchr(sub, '#')) break;
+                if (!r[1]) add(res, '#');
             }
         }
     }
 }
 
-int main() {
+int main(void) {
     printf("Enter number of productions: ");
     scanf("%d", &n);
     printf("Enter productions (e.g. E=TR, # for eps):\n");

@@ -7,13 +7,13 @@ ALGORITHM:
 2. In the rule action:
    - Initialize palindrome flag pal = 1.
    - Loop with two pointers i = 0 and j = yyleng - 1 moving towards each other.
-   - If yytext[i] != yytext[j], set pal = 0.
+   - Compare characters case-insensitively using tolower(). If mismatch, pal = 0.
    - Print whether the word is a palindrome.
    - Return 0 to finish scanning.
 3. In main(), prompt user for a word, call yylex(), and terminate.
 */
 #include <stdio.h>
-#include <string.h>
+#include <ctype.h>
 %}
 
 %option noyywrap
@@ -21,7 +21,7 @@ ALGORITHM:
 %%
 [a-zA-Z0-9]+  {
     int pal = 1;
-    for (int i = 0, j = yyleng - 1; i < j; i++, j--) if (yytext[i] != yytext[j]) pal = 0;
+    for (int i = 0, j = yyleng - 1; i < j; i++, j--) if (tolower(yytext[i]) != tolower(yytext[j])) pal = 0;
     printf("%s is %s\n", yytext, pal ? "a Palindrome" : "NOT a palindrome");
     return 0;
 }
@@ -40,9 +40,9 @@ SAMPLE OUTPUT:
 $ flex palindrome.l
 $ gcc lex.yy.c -o palindrome
 
-Test 1: Palindrome
-$ printf "madam\n" | ./palindrome
-Enter word: madam is a Palindrome
+Test 1: Palindrome (case-insensitive)
+$ printf "Madam\n" | ./palindrome
+Enter word: Madam is a Palindrome
 
 Test 2: Not a palindrome
 $ printf "compiler\n" | ./palindrome

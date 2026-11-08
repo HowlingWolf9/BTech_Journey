@@ -27,21 +27,19 @@ void first(char c, char *res) {
     if (!isupper(c)) { add(res, c); return; }
     for (int i = 0; i < n; i++) {
         if (p[i][0] == c) {
-            if (p[i][2] == '#') add(res, '#');
-            else {
-                for (int j = 2; p[i][j]; j++) {
-                    char sub[20] = "";
-                    first(p[i][j], sub);
-                    for (int k = 0; sub[k]; k++) if (sub[k] != '#') add(res, sub[k]);
-                    if (!strchr(sub, '#')) break;
-                    if (!p[i][j+1]) add(res, '#');
-                }
+            char *rhs = strchr(p[i], '=');
+            for (char *r = rhs ? rhs + 1 : p[i] + 2; *r; r++) {
+                char sub[20] = "";
+                first(*r, sub);
+                for (int k = 0; sub[k]; k++) if (sub[k] != '#') add(res, sub[k]);
+                if (!strchr(sub, '#')) break;
+                if (!r[1]) add(res, '#');
             }
         }
     }
 }
 
-int main() {
+int main(void) {
     printf("Enter number of productions: ");
     scanf("%d", &n);
     printf("Enter productions (e.g. E=TR, # for eps):\n");
@@ -52,19 +50,17 @@ int main() {
     for (int pass = 0; pass < 10; pass++) {
         for (int i = 0; i < n; i++) {
             char A = p[i][0];
-            for (int j = 2; p[i][j]; j++) {
-                char B = p[i][j];
-                if (isupper(B)) {
-                    int k = j + 1;
-                    for (; p[i][k]; k++) {
+            char *rhs = strchr(p[i], '=');
+            for (char *r = (rhs ? rhs + 1 : p[i] + 2); *r; r++) {
+                if (isupper(*r)) {
+                    char *k = r + 1;
+                    for (; *k; k++) {
                         char sub[20] = "";
-                        first(p[i][k], sub);
-                        for (int m = 0; sub[m]; m++) if (sub[m] != '#') add(fol[B - 'A'], sub[m]);
+                        first(*k, sub);
+                        for (int m = 0; sub[m]; m++) if (sub[m] != '#') add(fol[*r - 'A'], sub[m]);
                         if (!strchr(sub, '#')) break;
                     }
-                    if (!p[i][k]) {
-                        for (int m = 0; fol[A - 'A'][m]; m++) add(fol[B - 'A'], fol[A - 'A'][m]);
-                    }
+                    if (!*k) for (int m = 0; fol[A - 'A'][m]; m++) add(fol[*r - 'A'], fol[A - 'A'][m]);
                 }
             }
         }

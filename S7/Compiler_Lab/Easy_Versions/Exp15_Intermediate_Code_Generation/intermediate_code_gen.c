@@ -54,9 +54,7 @@ int main(void) {
         char c = post[i];
         if (isalnum(c)) { sprintf(ostk[++otop], "%c", c); }
         else {
-            char op2[10], op1[10], tmp[10];
-            strcpy(op2, ostk[otop--]);
-            strcpy(op1, ostk[otop--]);
+            char *op2 = ostk[otop--], *op1 = ostk[otop--], tmp[10];
             sprintf(tmp, "t%d", t++);
             printf("%s = %s %c %s\n", tmp, op1, c, op2);
             sprintf(q[qcnt].op, "%c", c);

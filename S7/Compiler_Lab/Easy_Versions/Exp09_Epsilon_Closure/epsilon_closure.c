@@ -20,7 +20,7 @@ void dfs(int s, int vis[]) {
     for (int i = 0; i < n; i++) if (t[s][i] && !vis[i]) dfs(i, vis);
 }
 
-int main() {
+int main(void) {
     printf("Enter number of states & transitions: ");
     scanf("%d%d", &n, &m);
     printf("Enter transitions (u sym v):\n");
@@ -34,13 +34,8 @@ int main() {
         int vis[20] = {0};
         dfs(i, vis);
         printf("e-closure(%d) = { ", i);
-        for (int j = 0, first = 1; j < n; j++) {
-            if (vis[j]) {
-                if (!first) printf(", ");
-                printf("%d", j);
-                first = 0;
-            }
-        }
+        for (int j = 0, f = 0; j < n; j++)
+            if (vis[j]) printf("%s%d", f++ ? ", " : "", j);
         printf(" }\n");
     }
     return 0;
