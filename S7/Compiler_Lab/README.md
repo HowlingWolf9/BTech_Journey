@@ -31,6 +31,9 @@ This repository contains implementations of all 16 experiments in the Compiler D
 ### EXTRA: Continuous Evaluation LEX Programs
 - **[Extra_LEX_Programms](./Extra_LEX_Programms)**: Additional 14 LEX programs covering Set 1 and Set 2 (simple/compound sentences, word operations, numerical processing, palindrome, Armstrong numbers, password validation, etc.)
 
+### EASY / EXAM VERSIONS: Ultra-Concise Minimum-Lines Implementations
+- **[Easy_Versions](./Easy_Versions)**: Ultra-concise, exam-friendly versions of all 30 programs (Exp01–Exp16 and Extra LEX Set 1 & Set 2) designed for quick handwriting on paper, stripped of defensive bloat while preserving full lab-manual standard algorithms and verified output footers.
+
 ---
 
 ## Compilation & Run Commands
