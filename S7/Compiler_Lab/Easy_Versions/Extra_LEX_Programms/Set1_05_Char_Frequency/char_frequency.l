@@ -20,12 +20,12 @@ int freq = 0;
 %option noyywrap
 
 %%
-\n      { return 0; }
-.       {
-            if (yytext[0] == ch) {
-                freq++;
-            }
-        }
+\n { return 0; }
+.  {
+    if (yytext[0] == ch) {
+        freq++;
+    }
+}
 %%
 
 int main(void) {

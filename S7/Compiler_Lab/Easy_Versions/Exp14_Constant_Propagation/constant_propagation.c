@@ -72,9 +72,17 @@ int main(void) {
             }
 
             if (c1 && c2) {
-                int ans = (op == '+' ? v1 + v2 :
-                           op == '-' ? v1 - v2 :
-                           op == '*' ? v1 * v2 : v1 / v2);
+                int ans = 0;
+                if (op == '+') {
+                    ans = v1 + v2;
+                } else if (op == '-') {
+                    ans = v1 - v2;
+                } else if (op == '*') {
+                    ans = v1 * v2;
+                } else if (op == '/') {
+                    ans = (v2 != 0) ? (v1 / v2) : 0;
+                }
+
                 set_val(lhs, ans, 1);
                 sprintf(res[i], "%s = %d", lhs, ans);
             } else {

@@ -19,14 +19,14 @@ char longest[100];
 %option noyywrap
 
 %%
-[a-zA-Z]+   {
-                if (yyleng > max) {
-                    max = yyleng;
-                    strcpy(longest, yytext);
-                }
-            }
-\n          { return 0; }
-.           ;
+[a-zA-Z]+ {
+    if (yyleng > max) {
+        max = yyleng;
+        strcpy(longest, yytext);
+    }
+}
+\n { return 0; }
+.  ;
 %%
 
 int main(void) {

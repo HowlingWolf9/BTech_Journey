@@ -28,9 +28,15 @@ int main(void) {
         scanf(" %[^\n]", line);
 
         if (sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2) == 4) {
-            char *instr = (op == '+') ? "ADD" :
-                          (op == '-') ? "SUB" :
-                          (op == '*') ? "MUL" : "DIV";
+            char *instr = "ADD";
+            if (op == '-') {
+                instr = "SUB";
+            } else if (op == '*') {
+                instr = "MUL";
+            } else if (op == '/') {
+                instr = "DIV";
+            }
+
             printf("MOV R0, %s\n", op1);
             printf("%s R0, %s\n", instr, op2);
             printf("MOV %s, R0\n\n", lhs);

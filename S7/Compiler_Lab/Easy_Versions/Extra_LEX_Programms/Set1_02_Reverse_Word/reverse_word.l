@@ -16,15 +16,15 @@ ALGORITHM:
 %option noyywrap
 
 %%
-[^ \t\n]+   {
-                printf("Reversed word: ");
-                for (int i = yyleng - 1; i >= 0; i--) {
-                    putchar(yytext[i]);
-                }
-                printf("\n");
-                return 0;
-            }
-\n|.        ;
+[^ \t\n]+ {
+    printf("Reversed word: ");
+    for (int i = yyleng - 1; i >= 0; i--) {
+        putchar(yytext[i]);
+    }
+    printf("\n");
+    return 0;
+}
+\n|. ;
 %%
 
 int main(void) {

@@ -40,7 +40,9 @@ int main(void) {
             ungetc(c, fp);
 
             sprintf(t, " %s ", buf);
-            printf("%-15s %s\n", buf, strstr(" int float char if else while return void ", t) ? "Keyword" : "Identifier");
+            char *kw = " int float char if else while return void ";
+            char *token = strstr(kw, t) ? "Keyword" : "Identifier";
+            printf("%-15s %s\n", buf, token);
         } else if (isdigit(c)) {
             int i = 0;
             buf[i++] = c;

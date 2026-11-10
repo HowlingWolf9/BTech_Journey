@@ -25,7 +25,8 @@ ALGORITHM:
 [a-zA-Z_][a-zA-Z0-9_]*                                     { printf("%-15s Identifier\n", yytext); }
 [+\-*/=<>]                                                 { printf("%-15s Operator\n", yytext); }
 [;,(){}]                                                   { printf("%-15s Delimiter\n", yytext); }
-[ \t\n]+|.                                                 ;
+[ \t\n]+    ;
+.           ;
 %%
 
 int main(void) {

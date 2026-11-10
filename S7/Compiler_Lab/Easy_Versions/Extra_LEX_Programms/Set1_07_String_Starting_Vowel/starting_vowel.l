@@ -14,15 +14,15 @@ ALGORITHM:
 %option noyywrap
 
 %%
-^[aeiouAEIOU][^\n]*   {
-                          printf("Accepted: Starts with a vowel\n");
-                          return 0;
-                      }
-[^\n]+                {
-                          printf("Rejected: Does not start with a vowel\n");
-                          return 0;
-                      }
-\n|.                  ;
+^[aeiouAEIOU][^\n]* {
+    printf("Accepted: Starts with a vowel\n");
+    return 0;
+}
+[^\n]+ {
+    printf("Rejected: Does not start with a vowel\n");
+    return 0;
+}
+\n|. ;
 %%
 
 int main(void) {

@@ -97,7 +97,9 @@ int main(void) {
             sprintf(q[qcnt].op, "%c", c);
             strcpy(q[qcnt].a1, op1);
             strcpy(q[qcnt].a2, op2);
-            strcpy(q[qcnt++].res, tmp);
+            strcpy(q[qcnt].res, tmp);
+            qcnt++;
+
             strcpy(ostk[++otop], tmp);
         }
     }
@@ -106,7 +108,8 @@ int main(void) {
     strcpy(q[qcnt].op, "=");
     strcpy(q[qcnt].a1, ostk[otop]);
     strcpy(q[qcnt].a2, "-");
-    strcpy(q[qcnt++].res, lhs);
+    strcpy(q[qcnt].res, lhs);
+    qcnt++;
 
     printf("\n--- Quadruple Table ---\n");
     printf("%-6s %-10s %-10s %-10s %-10s\n", "Index", "Operator", "Argument 1", "Argument 2", "Result");

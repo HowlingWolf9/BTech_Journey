@@ -19,13 +19,13 @@ int c = 0;
 %option noyywrap
 
 %%
-[-+]?[0-9]+(\.[0-9]+)?  {
-                            a[c++] = atof(yytext);
-                            if (c == 3) {
-                                return 0;
-                            }
-                        }
-[ \t\n]+|.              ;
+[-+]?[0-9]+(\.[0-9]+)? {
+    a[c++] = atof(yytext);
+    if (c == 3) {
+        return 0;
+    }
+}
+[ \t\n]+|. ;
 %%
 
 int main(void) {
