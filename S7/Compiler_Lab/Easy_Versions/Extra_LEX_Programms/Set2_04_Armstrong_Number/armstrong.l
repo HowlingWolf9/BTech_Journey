@@ -24,14 +24,22 @@ ALGORITHM:
 
 %%
 [0-9]+  {
-    int n = atoi(yytext), t = n, sum = 0, d = yyleng;
+    int n = atoi(yytext);
+    int t = n;
+    int sum = 0;
+    int d = yyleng;
+
     while (t) {
-        int r = t % 10, p = 1;
-        for (int i = 0; i < d; i++) p *= r;
+        int r = t % 10;
+        int p = 1;
+        for (int i = 0; i < d; i++) {
+            p *= r;
+        }
         sum += p;
         t /= 10;
     }
-    printf("%d is %s\n", n, sum == n ? "an Armstrong number" : "NOT an Armstrong number");
+
+    printf("%d is %s\n", n, (sum == n) ? "an Armstrong number" : "NOT an Armstrong number");
     return 0;
 }
 \n|.    ;

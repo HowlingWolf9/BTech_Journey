@@ -22,14 +22,21 @@ int main(void) {
     scanf("%d", &n);
     printf("Enter TAC statements (e.g. t1 = b + c or a = t2):\n");
     printf("\n--- Generated Target Machine Code ---\n");
+
     for (int i = 0; i < n; i++) {
         char lhs[10], op1[10], op2[10], op, line[50];
         scanf(" %[^\n]", line);
+
         if (sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2) == 4) {
-            char *instr = (op == '+') ? "ADD" : (op == '-') ? "SUB" : (op == '*') ? "MUL" : "DIV";
-            printf("MOV R0, %s\n%s R0, %s\nMOV %s, R0\n\n", op1, instr, op2, lhs);
+            char *instr = (op == '+') ? "ADD" :
+                          (op == '-') ? "SUB" :
+                          (op == '*') ? "MUL" : "DIV";
+            printf("MOV R0, %s\n", op1);
+            printf("%s R0, %s\n", instr, op2);
+            printf("MOV %s, R0\n\n", lhs);
         } else if (sscanf(line, "%s = %s", lhs, op1) == 2) {
-            printf("MOV R0, %s\nMOV %s, R0\n\n", op1, lhs);
+            printf("MOV R0, %s\n", op1);
+            printf("MOV %s, R0\n\n", lhs);
         }
     }
     return 0;

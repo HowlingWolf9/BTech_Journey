@@ -29,16 +29,55 @@ int T(void);
 int Tprime(void);
 int F(void);
 
-int E(void)      { return T() && Eprime(); }
-int Eprime(void) { return in[pos] == '+' ? (pos++, T() && Eprime()) : 1; }
-int T(void)      { return F() && Tprime(); }
-int Tprime(void) { return in[pos] == '*' ? (pos++, F() && Tprime()) : 1; }
-int F(void)      { return in[pos] == '(' ? (pos++, E() && in[pos++] == ')') : (in[pos] == 'i' ? (pos++, 1) : 0); }
+int E(void) {
+    return T() && Eprime();
+}
+
+int Eprime(void) {
+    if (in[pos] == '+') {
+        pos++;
+        return T() && Eprime();
+    }
+    return 1;
+}
+
+int T(void) {
+    return F() && Tprime();
+}
+
+int Tprime(void) {
+    if (in[pos] == '*') {
+        pos++;
+        return F() && Tprime();
+    }
+    return 1;
+}
+
+int F(void) {
+    if (in[pos] == '(') {
+        pos++;
+        if (E() && in[pos] == ')') {
+            pos++;
+            return 1;
+        }
+        return 0;
+    }
+    if (in[pos] == 'i') {
+        pos++;
+        return 1;
+    }
+    return 0;
+}
 
 int main(void) {
     printf("Enter input string (e.g. i+i*i): ");
     scanf("%s", in);
-    puts(E() && !in[pos] ? "String is Accepted" : "String is Rejected");
+
+    if (E() && !in[pos]) {
+        printf("String is Accepted\n");
+    } else {
+        printf("String is Rejected\n");
+    }
     return 0;
 }
 

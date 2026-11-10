@@ -22,8 +22,12 @@ ALGORITHM:
 [0-9]+  {
     int n = atoi(yytext);
     long fact = 1;
-    for (int i = 1; i <= n; i++) fact *= i;
-    printf("%d is %s\nFactorial of %d = %ld\n", n, (n % 2 == 0) ? "EVEN" : "ODD", n, fact);
+    for (int i = 1; i <= n; i++) {
+        fact *= i;
+    }
+
+    printf("%d is %s\n", n, (n % 2 == 0) ? "EVEN" : "ODD");
+    printf("Factorial of %d = %ld\n", n, fact);
     return 0;
 }
 \n|.    ;

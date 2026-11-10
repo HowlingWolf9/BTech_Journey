@@ -17,7 +17,12 @@ int c = 0;
 %option noyywrap
 
 %%
-[a-zA-Z]+   { if (yyleng > 5 && yyleng < 10) { c++; printf("  Matched: \"%s\" (Length: %d)\n", yytext, yyleng); } }
+[a-zA-Z]+   {
+                if (yyleng > 5 && yyleng < 10) {
+                    c++;
+                    printf("  Matched: \"%s\" (Length: %d)\n", yytext, yyleng);
+                }
+            }
 \n          { return 0; }
 .           ;
 %%

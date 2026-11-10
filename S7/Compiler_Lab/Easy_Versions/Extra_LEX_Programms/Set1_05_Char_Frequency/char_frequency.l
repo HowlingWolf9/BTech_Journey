@@ -21,15 +21,22 @@ int freq = 0;
 
 %%
 \n      { return 0; }
-.       { if (yytext[0] == ch) freq++; }
+.       {
+            if (yytext[0] == ch) {
+                freq++;
+            }
+        }
 %%
 
 int main(void) {
     printf("Enter character: ");
     scanf(" %c", &ch);
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
+
     printf("Enter sentence: ");
     yylex();
+
     printf("Frequency of '%c': %d\n", ch, freq);
     return 0;
 }

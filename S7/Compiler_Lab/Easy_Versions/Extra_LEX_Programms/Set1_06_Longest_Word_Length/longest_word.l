@@ -19,7 +19,12 @@ char longest[100];
 %option noyywrap
 
 %%
-[a-zA-Z]+   { if (yyleng > max) { max = yyleng; strcpy(longest, yytext); } }
+[a-zA-Z]+   {
+                if (yyleng > max) {
+                    max = yyleng;
+                    strcpy(longest, yytext);
+                }
+            }
 \n          { return 0; }
 .           ;
 %%
@@ -27,7 +32,9 @@ char longest[100];
 int main(void) {
     printf("Enter a string: ");
     yylex();
-    printf("Longest word: %s\nLength: %d\n", longest, max);
+
+    printf("Longest word: %s\n", longest);
+    printf("Length: %d\n", max);
     return 0;
 }
 

@@ -20,7 +20,9 @@ ALGORITHM:
 %%
 [0-9]+  {
     int sum = 0;
-    for (int i = 0; i < yyleng; i++) sum += yytext[i] - '0';
+    for (int i = 0; i < yyleng; i++) {
+        sum += yytext[i] - '0';
+    }
     printf("Sum of digits = %d\n", sum);
     return 0;
 }

@@ -31,7 +31,11 @@ int pi = 0, ni = 0, pf = 0, nf = 0;
 int main(void) {
     printf("Enter numbers: ");
     yylex();
-    printf("Positive Integers: %d\nNegative Integers: %d\nPositive Floats: %d\nNegative Floats: %d\n", pi, ni, pf, nf);
+
+    printf("Positive Integers: %d\n", pi);
+    printf("Negative Integers: %d\n", ni);
+    printf("Positive Floats: %d\n", pf);
+    printf("Negative Floats: %d\n", nf);
     return 0;
 }
 

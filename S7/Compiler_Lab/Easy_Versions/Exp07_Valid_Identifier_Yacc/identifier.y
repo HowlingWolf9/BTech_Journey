@@ -12,19 +12,35 @@ ALGORITHM:
 4. In main(), call yyparse().
 */
 #include <stdio.h>
-int yylex();
-void yyerror(char *s) { printf("Invalid Identifier\n"); }
+
+int yylex(void);
+void yyerror(char *s) {
+    printf("Invalid Identifier\n");
+}
 %}
 
 %token LETTER DIGIT
 
 %%
-start: ID { printf("Valid Identifier\n"); return 0; } ;
-ID: LETTER REST ;
-REST: REST LETTER | REST DIGIT | ;
+start:
+    ID {
+        printf("Valid Identifier\n");
+        return 0;
+    }
+    ;
+
+ID:
+    LETTER REST
+    ;
+
+REST:
+    REST LETTER
+    | REST DIGIT
+    |
+    ;
 %%
 
-int main() {
+int main(void) {
     printf("Enter identifier: ");
     yyparse();
     return 0;

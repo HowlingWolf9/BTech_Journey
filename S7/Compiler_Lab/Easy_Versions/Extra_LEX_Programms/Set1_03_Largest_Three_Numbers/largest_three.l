@@ -19,14 +19,27 @@ int c = 0;
 %option noyywrap
 
 %%
-[-+]?[0-9]+(\.[0-9]+)?  { a[c++] = atof(yytext); if (c == 3) return 0; }
+[-+]?[0-9]+(\.[0-9]+)?  {
+                            a[c++] = atof(yytext);
+                            if (c == 3) {
+                                return 0;
+                            }
+                        }
 [ \t\n]+|.              ;
 %%
 
 int main(void) {
     printf("Enter three numbers: ");
     yylex();
-    double max = a[0] > a[1] ? (a[0] > a[2] ? a[0] : a[2]) : (a[1] > a[2] ? a[1] : a[2]);
+
+    double max = a[0];
+    if (a[1] > max) {
+        max = a[1];
+    }
+    if (a[2] > max) {
+        max = a[2];
+    }
+
     printf("Largest number: %g\n", max);
     return 0;
 }

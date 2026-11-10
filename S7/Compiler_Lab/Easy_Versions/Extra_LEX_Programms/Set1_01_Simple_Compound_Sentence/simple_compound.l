@@ -22,7 +22,11 @@ int compound = 0;
 %%
 [a-zA-Z]+   {
     char *c[] = {"and", "but", "or", "so", "yet", "for", "nor", NULL};
-    for (int i = 0; c[i]; i++) if (!strcasecmp(yytext, c[i])) compound = 1;
+    for (int i = 0; c[i]; i++) {
+        if (!strcasecmp(yytext, c[i])) {
+            compound = 1;
+        }
+    }
 }
 \n          { return 0; }
 .           ;
@@ -31,7 +35,12 @@ int compound = 0;
 int main(void) {
     printf("Enter sentence: ");
     yylex();
-    puts(compound ? "Compound Sentence" : "Simple Sentence");
+
+    if (compound) {
+        printf("Compound Sentence\n");
+    } else {
+        printf("Simple Sentence\n");
+    }
     return 0;
 }
 

@@ -19,7 +19,7 @@ abc     { printf("ABC"); }
 .|\n    { ECHO; }
 %%
 
-int main() {
+int main(void) {
     printf("Enter string: ");
     yylex();
     return 0;

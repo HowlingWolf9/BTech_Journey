@@ -18,12 +18,20 @@ int l = 0, w = 0, c = 0;
 %option noyywrap
 
 %%
-\n          { l++; c++; }
-[^ \t\n]+   { w++; c += yyleng; }
-.           { c++; }
+\n          {
+                l++;
+                c++;
+            }
+[^ \t\n]+   {
+                w++;
+                c += yyleng;
+            }
+.           {
+                c++;
+            }
 %%
 
-int main() {
+int main(void) {
     printf("Enter text:\n");
     yylex();
     printf("\nLines: %d\nWords: %d\nCharacters: %d\n", l, w, c);

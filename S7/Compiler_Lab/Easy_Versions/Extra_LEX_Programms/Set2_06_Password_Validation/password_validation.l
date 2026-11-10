@@ -22,13 +22,27 @@ ALGORITHM:
 
 %%
 [^\n]+  {
-    int u = 0, l = 0, d = 0;
+    int u = 0;
+    int l = 0;
+    int d = 0;
+
     for (int i = 0; yytext[i]; i++) {
-        if (isupper(yytext[i])) u = 1;
-        if (islower(yytext[i])) l = 1;
-        if (isdigit(yytext[i])) d = 1;
+        if (isupper(yytext[i])) {
+            u = 1;
+        }
+        if (islower(yytext[i])) {
+            l = 1;
+        }
+        if (isdigit(yytext[i])) {
+            d = 1;
+        }
     }
-    puts(yyleng >= 8 && u && l && d ? "Valid Password" : "Invalid Password");
+
+    if (yyleng >= 8 && u && l && d) {
+        printf("Valid Password\n");
+    } else {
+        printf("Invalid Password\n");
+    }
     return 0;
 }
 \n|.    ;

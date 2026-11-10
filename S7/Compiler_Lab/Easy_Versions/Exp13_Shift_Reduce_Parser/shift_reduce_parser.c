@@ -27,21 +27,48 @@ ALGORITHM:
 char s[50] = "$", in[50];
 int top = 0, ip = 0;
 
-void print(char *act) { printf("%-15s %-15s %s\n", s, in + ip, act); }
+void print(char *act) {
+    printf("%-15s %-15s %s\n", s, in + ip, act);
+}
 
 int main(void) {
     printf("Enter input string (e.g. i+i*i): ");
     scanf("%s", in);
     strcat(in, "$");
-    printf("\n%-15s %-15s %s\n--------------------------------------------\n", "Stack", "Input", "Action");
+
+    printf("\n%-15s %-15s %s\n", "Stack", "Input", "Action");
+    printf("--------------------------------------------\n");
+
     while (1) {
-        if (s[top] == 'i') { s[top] = 'E'; print("Reduce: E -> i"); }
-        else if (top >= 2 && s[top-2] == '(' && s[top-1] == 'E' && s[top] == ')') { top -= 2; s[top] = 'E'; s[top+1] = 0; print("Reduce: E -> (E)"); }
-        else if (top >= 2 && s[top-2] == 'E' && s[top-1] == '*' && s[top] == 'E') { top -= 2; s[top] = 'E'; s[top+1] = 0; print("Reduce: E -> E*E"); }
-        else if (top >= 2 && s[top-2] == 'E' && s[top-1] == '+' && s[top] == 'E' && in[ip] != '*') { top -= 2; s[top] = 'E'; s[top+1] = 0; print("Reduce: E -> E+E"); }
-        else if (!strcmp(s, "$E") && in[ip] == '$') { printf("%-15s %-15s ACCEPT\n", s, in + ip); break; }
-        else if (in[ip] == '$') { printf("REJECT\n"); break; }
-        else { s[++top] = in[ip++]; s[top+1] = 0; print("SHIFT"); }
+        if (s[top] == 'i') {
+            s[top] = 'E';
+            print("Reduce: E -> i");
+        } else if (top >= 2 && s[top - 2] == '(' && s[top - 1] == 'E' && s[top] == ')') {
+            top -= 2;
+            s[top] = 'E';
+            s[top + 1] = '\0';
+            print("Reduce: E -> (E)");
+        } else if (top >= 2 && s[top - 2] == 'E' && s[top - 1] == '*' && s[top] == 'E') {
+            top -= 2;
+            s[top] = 'E';
+            s[top + 1] = '\0';
+            print("Reduce: E -> E*E");
+        } else if (top >= 2 && s[top - 2] == 'E' && s[top - 1] == '+' && s[top] == 'E' && in[ip] != '*') {
+            top -= 2;
+            s[top] = 'E';
+            s[top + 1] = '\0';
+            print("Reduce: E -> E+E");
+        } else if (!strcmp(s, "$E") && in[ip] == '$') {
+            printf("%-15s %-15s ACCEPT\n", s, in + ip);
+            break;
+        } else if (in[ip] == '$') {
+            printf("REJECT\n");
+            break;
+        } else {
+            s[++top] = in[ip++];
+            s[top + 1] = '\0';
+            print("SHIFT");
+        }
     }
     return 0;
 }

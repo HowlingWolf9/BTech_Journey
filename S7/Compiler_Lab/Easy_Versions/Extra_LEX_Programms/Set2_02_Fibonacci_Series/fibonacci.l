@@ -22,11 +22,16 @@ ALGORITHM:
 
 %%
 [0-9]+  {
-    int limit = atoi(yytext), a = 0, b = 1;
+    int limit = atoi(yytext);
+    int a = 0;
+    int b = 1;
+
     printf("Fibonacci series up to %d:\n", limit);
     while (a <= limit) {
         printf("%d ", a);
-        int next = a + b; a = b; b = next;
+        int next = a + b;
+        a = b;
+        b = next;
     }
     printf("\n");
     return 0;

@@ -21,7 +21,12 @@ ALGORITHM:
 %%
 [a-zA-Z0-9]+  {
     int pal = 1;
-    for (int i = 0, j = yyleng - 1; i < j; i++, j--) if (tolower(yytext[i]) != tolower(yytext[j])) pal = 0;
+    for (int i = 0, j = yyleng - 1; i < j; i++, j--) {
+        if (tolower(yytext[i]) != tolower(yytext[j])) {
+            pal = 0;
+            break;
+        }
+    }
     printf("%s is %s\n", yytext, pal ? "a Palindrome" : "NOT a palindrome");
     return 0;
 }

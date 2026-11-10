@@ -24,10 +24,11 @@ int v = 0, c = 0;
 .               ;
 %%
 
-int main() {
+int main(void) {
     printf("Enter string: ");
     yylex();
-    printf("Vowels: %d\nConsonants: %d\n", v, c);
+    printf("Vowels: %d\n", v);
+    printf("Consonants: %d\n", c);
     return 0;
 }
 

@@ -14,8 +14,11 @@ ALGORITHM:
 5. yyerror() prints "Invalid expression" upon syntax error.
 */
 #include <stdio.h>
-int yylex();
-void yyerror(char *s) { printf("Invalid expression\n"); }
+
+int yylex(void);
+void yyerror(char *s) {
+    printf("Invalid expression\n");
+}
 %}
 
 %token NUM
@@ -23,17 +26,24 @@ void yyerror(char *s) { printf("Invalid expression\n"); }
 %left '*' '/'
 
 %%
-S: E { printf("Result = %d\n", $1); return 0; } ;
-E: E '+' E  { $$ = $1 + $3; }
- | E '-' E  { $$ = $1 - $3; }
- | E '*' E  { $$ = $1 * $3; }
- | E '/' E  { $$ = $1 / $3; }
- | '(' E ')' { $$ = $2; }
- | NUM      { $$ = $1; }
- ;
+S:
+    E {
+        printf("Result = %d\n", $1);
+        return 0;
+    }
+    ;
+
+E:
+    E '+' E     { $$ = $1 + $3; }
+    | E '-' E   { $$ = $1 - $3; }
+    | E '*' E   { $$ = $1 * $3; }
+    | E '/' E   { $$ = $1 / $3; }
+    | '(' E ')' { $$ = $2; }
+    | NUM       { $$ = $1; }
+    ;
 %%
 
-int main() {
+int main(void) {
     printf("Enter expression: ");
     yyparse();
     return 0;

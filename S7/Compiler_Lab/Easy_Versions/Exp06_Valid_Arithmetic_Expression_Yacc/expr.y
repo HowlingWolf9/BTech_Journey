@@ -14,8 +14,11 @@ ALGORITHM:
 5. If expression is invalid, yyerror() prints "Invalid Expression".
 */
 #include <stdio.h>
-int yylex();
-void yyerror(char *s) { printf("Invalid Expression\n"); }
+
+int yylex(void);
+void yyerror(char *s) {
+    printf("Invalid Expression\n");
+}
 %}
 
 %token NUMBER ID
@@ -23,11 +26,25 @@ void yyerror(char *s) { printf("Invalid Expression\n"); }
 %left '*' '/'
 
 %%
-exp: E { printf("Valid Expression\n"); return 0; } ;
-E: E '+' E | E '-' E | E '*' E | E '/' E | '(' E ')' | NUMBER | ID ;
+exp:
+    E {
+        printf("Valid Expression\n");
+        return 0;
+    }
+    ;
+
+E:
+    E '+' E
+    | E '-' E
+    | E '*' E
+    | E '/' E
+    | '(' E ')'
+    | NUMBER
+    | ID
+    ;
 %%
 
-int main() {
+int main(void) {
     printf("Enter expression: ");
     yyparse();
     return 0;

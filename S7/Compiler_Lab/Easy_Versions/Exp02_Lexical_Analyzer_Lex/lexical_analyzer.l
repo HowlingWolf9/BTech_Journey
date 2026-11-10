@@ -28,7 +28,7 @@ ALGORITHM:
 [ \t\n]+|.                                                 ;
 %%
 
-int main() {
+int main(void) {
     yyin = fopen("input.c", "r");
     printf("%-15s Token\n------------------------------\n", "Lexeme");
     yylex();

@@ -22,23 +22,42 @@ int main(void) {
     FILE *fp = fopen("input.c", "r");
     char buf[50], t[55];
     int c;
+
     printf("%-15s %s\n------------------------------\n", "Lexeme", "Token");
+
     while ((c = fgetc(fp)) != EOF) {
-        if (isspace(c)) continue;
+        if (isspace(c)) {
+            continue;
+        }
+
         if (isalpha(c) || c == '_') {
             int i = 0;
-            for (buf[i++] = c; isalnum(c = fgetc(fp)) || c == '_'; ) buf[i++] = c;
-            buf[i] = 0; ungetc(c, fp);
+            buf[i++] = c;
+            while (isalnum(c = fgetc(fp)) || c == '_') {
+                buf[i++] = c;
+            }
+            buf[i] = '\0';
+            ungetc(c, fp);
+
             sprintf(t, " %s ", buf);
             printf("%-15s %s\n", buf, strstr(" int float char if else while return void ", t) ? "Keyword" : "Identifier");
         } else if (isdigit(c)) {
             int i = 0;
-            for (buf[i++] = c; isdigit(c = fgetc(fp)); ) buf[i++] = c;
-            buf[i] = 0; ungetc(c, fp);
+            buf[i++] = c;
+            while (isdigit(c = fgetc(fp))) {
+                buf[i++] = c;
+            }
+            buf[i] = '\0';
+            ungetc(c, fp);
+
             printf("%-15s Constant\n", buf);
-        } else if (strchr("+-*/=<>", c)) printf("%-15c Operator\n", c);
-        else if (strchr(";,(){}", c)) printf("%-15c Delimiter\n", c);
+        } else if (strchr("+-*/=<>", c)) {
+            printf("%-15c Operator\n", c);
+        } else if (strchr(";,(){}", c)) {
+            printf("%-15c Delimiter\n", c);
+        }
     }
+
     fclose(fp);
     return 0;
 }

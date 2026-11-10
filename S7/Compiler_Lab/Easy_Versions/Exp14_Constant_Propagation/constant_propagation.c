@@ -22,14 +22,30 @@ char vars[20][10];
 int vals[20], is_c[20], n_vars = 0;
 
 int get_val(char *s, int *v) {
-    if (isdigit(s[0]) || (s[0] == '-' && isdigit(s[1]))) { *v = atoi(s); return 1; }
-    for (int i = 0; i < n_vars; i++) if (!strcmp(vars[i], s) && is_c[i]) { *v = vals[i]; return 1; }
+    if (isdigit(s[0]) || (s[0] == '-' && isdigit(s[1]))) {
+        *v = atoi(s);
+        return 1;
+    }
+    for (int i = 0; i < n_vars; i++) {
+        if (!strcmp(vars[i], s) && is_c[i]) {
+            *v = vals[i];
+            return 1;
+        }
+    }
     return 0;
 }
 
 void set_val(char *s, int v, int c) {
-    for (int i = 0; i < n_vars; i++) if (!strcmp(vars[i], s)) { vals[i] = v; is_c[i] = c; return; }
-    strcpy(vars[n_vars], s); vals[n_vars] = v; is_c[n_vars++] = c;
+    for (int i = 0; i < n_vars; i++) {
+        if (!strcmp(vars[i], s)) {
+            vals[i] = v;
+            is_c[i] = c;
+            return;
+        }
+    }
+    strcpy(vars[n_vars], s);
+    vals[n_vars] = v;
+    is_c[n_vars++] = c;
 }
 
 int main(void) {
@@ -37,16 +53,28 @@ int main(void) {
     printf("Enter number of statements: ");
     scanf("%d", &n);
     printf("Enter TAC statements (e.g. a = 5, c = a + b):\n");
+
     char res[20][50];
     for (int i = 0; i < n; i++) {
         char line[50], lhs[10], op1[10], op2[10], op;
         scanf(" %[^\n]", line);
+
         if (sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2) == 4) {
-            int v1, v2, c1 = get_val(op1, &v1), c2 = get_val(op2, &v2);
-            if (c1) sprintf(op1, "%d", v1);
-            if (c2) sprintf(op2, "%d", v2);
+            int v1, v2;
+            int c1 = get_val(op1, &v1);
+            int c2 = get_val(op2, &v2);
+
+            if (c1) {
+                sprintf(op1, "%d", v1);
+            }
+            if (c2) {
+                sprintf(op2, "%d", v2);
+            }
+
             if (c1 && c2) {
-                int ans = (op == '+' ? v1 + v2 : op == '-' ? v1 - v2 : op == '*' ? v1 * v2 : v1 / v2);
+                int ans = (op == '+' ? v1 + v2 :
+                           op == '-' ? v1 - v2 :
+                           op == '*' ? v1 * v2 : v1 / v2);
                 set_val(lhs, ans, 1);
                 sprintf(res[i], "%s = %d", lhs, ans);
             } else {
@@ -54,13 +82,22 @@ int main(void) {
                 sprintf(res[i], "%s = %s %c %s", lhs, op1, op, op2);
             }
         } else if (sscanf(line, "%s = %s", lhs, op1) == 2) {
-            int v1, c1 = get_val(op1, &v1);
-            if (c1) { set_val(lhs, v1, 1); sprintf(res[i], "%s = %d", lhs, v1); }
-            else { set_val(lhs, 0, 0); sprintf(res[i], "%s = %s", lhs, op1); }
+            int v1;
+            int c1 = get_val(op1, &v1);
+            if (c1) {
+                set_val(lhs, v1, 1);
+                sprintf(res[i], "%s = %d", lhs, v1);
+            } else {
+                set_val(lhs, 0, 0);
+                sprintf(res[i], "%s = %s", lhs, op1);
+            }
         }
     }
+
     printf("\n--- Optimized Code (Constant Propagation & Folding) ---\n");
-    for (int i = 0; i < n; i++) printf("%s\n", res[i]);
+    for (int i = 0; i < n; i++) {
+        printf("%s\n", res[i]);
+    }
     return 0;
 }
 

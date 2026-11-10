@@ -17,25 +17,39 @@ int n, m, t[20][20];
 
 void dfs(int s, int vis[]) {
     vis[s] = 1;
-    for (int i = 0; i < n; i++) if (t[s][i] && !vis[i]) dfs(i, vis);
+    for (int i = 0; i < n; i++) {
+        if (t[s][i] && !vis[i]) {
+            dfs(i, vis);
+        }
+    }
 }
 
 int main(void) {
     printf("Enter number of states & transitions: ");
     scanf("%d%d", &n, &m);
+
     printf("Enter transitions (u sym v):\n");
-    for (int i = 0, u, v; i < m; i++) {
+    for (int i = 0; i < m; i++) {
+        int u, v;
         char c;
         scanf("%d %c %d", &u, &c, &v);
-        if (c == 'e' || c == 'E') t[u][v] = 1;
+        if (c == 'e' || c == 'E') {
+            t[u][v] = 1;
+        }
     }
+
     printf("\nEpsilon Closures:\n");
     for (int i = 0; i < n; i++) {
         int vis[20] = {0};
         dfs(i, vis);
+
         printf("e-closure(%d) = { ", i);
-        for (int j = 0, f = 0; j < n; j++)
-            if (vis[j]) printf("%s%d", f++ ? ", " : "", j);
+        int f = 0;
+        for (int j = 0; j < n; j++) {
+            if (vis[j]) {
+                printf("%s%d", f++ ? ", " : "", j);
+            }
+        }
         printf(" }\n");
     }
     return 0;
