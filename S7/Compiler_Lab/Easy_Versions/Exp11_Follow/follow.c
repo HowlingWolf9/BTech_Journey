@@ -21,9 +21,15 @@ char p[20][20], fol[26][20];
 
 void add(char *s, char c) {
     if (!strchr(s, c)) {
-        int l = strlen(s);
-        s[l] = c;
-        s[l+1] = 0;
+        strncat(s, &c, 1);
+    }
+}
+
+void add_set(char *d, char *s) {
+    for (; *s; s++) {
+        if (*s != '#') {
+            add(d, *s);
+        }
     }
 }
 
@@ -38,9 +44,7 @@ void first(char c, char *res) {
             for (char *r = rhs ? rhs + 1 : p[i] + 2; *r; r++) {
                 char sub[20] = "";
                 first(*r, sub);
-                for (int k = 0; sub[k]; k++)
-                    if (sub[k] != '#')
-                        add(res, sub[k]);
+                add_set(res, sub);
                 if (!strchr(sub, '#'))
                     break;
                 if (!r[1])
@@ -63,20 +67,19 @@ int main(void) {
         for (int i = 0; i < n; i++) {
             char A = p[i][0];
             char *rhs = strchr(p[i], '=');
-            for (char *r = (rhs ? rhs + 1 : p[i] + 2); *r; r++) {
+            for (char *r = rhs ? rhs + 1 : p[i] + 2; *r; r++) {
                 if (isupper(*r)) {
-                    char *k = r + 1;
-                    for (; *k; k++) {
+                    char *k;
+                    for (k = r + 1; *k; k++) {
                         char sub[20] = "";
                         first(*k, sub);
-                        for (int m = 0; sub[m]; m++)
-                            if (sub[m] != '#')
-                                add(fol[*r - 'A'], sub[m]);
+                        add_set(fol[*r - 'A'], sub);
                         if (!strchr(sub, '#'))
                             break;
                     }
-                    if (!*k) for (int m = 0; fol[A - 'A'][m]; m++)
-                        add(fol[*r - 'A'], fol[A - 'A'][m]);
+                    if (!*k) {
+                        add_set(fol[*r - 'A'], fol[A - 'A']);
+                    }
                 }
             }
         }

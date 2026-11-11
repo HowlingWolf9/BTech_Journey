@@ -15,37 +15,39 @@ ALGORITHM:
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 char vars[20][10];
 int vals[20], is_c[20], n_vars = 0;
 
+int find_var(char *s) {
+    for (int i = 0; i < n_vars; i++) {
+        if (!strcmp(vars[i], s)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 int get_val(char *s, int *v) {
-    if (isdigit(s[0]) || (s[0] == '-' && isdigit(s[1]))) {
-        *v = atoi(s);
+    if (sscanf(s, "%d", v) == 1) {
         return 1;
     }
-    for (int i = 0; i < n_vars; i++) {
-        if (!strcmp(vars[i], s) && is_c[i]) {
-            *v = vals[i];
-            return 1;
-        }
+    int idx = find_var(s);
+    if (idx >= 0 && is_c[idx]) {
+        *v = vals[idx];
+        return 1;
     }
     return 0;
 }
 
 void set_val(char *s, int v, int c) {
-    for (int i = 0; i < n_vars; i++) {
-        if (!strcmp(vars[i], s)) {
-            vals[i] = v;
-            is_c[i] = c;
-            return;
-        }
+    int idx = find_var(s);
+    if (idx < 0) {
+        idx = n_vars++;
+        strcpy(vars[idx], s);
     }
-    strcpy(vars[n_vars], s);
-    vals[n_vars] = v;
-    is_c[n_vars++] = c;
+    vals[idx] = v;
+    is_c[idx] = c;
 }
 
 int main(void) {
@@ -56,13 +58,14 @@ int main(void) {
 
     char res[20][50];
     for (int i = 0; i < n; i++) {
-        char line[50], lhs[10], op1[10], op2[10], op;
+        char line[50], lhs[10], op1[16], op2[16], op;
         scanf(" %[^\n]", line);
 
-        if (sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2) == 4) {
-            int v1, v2;
+        int tok = sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2);
+        if (tok == 2 || tok == 4) {
+            int v1 = 0, v2 = 0;
             int c1 = get_val(op1, &v1);
-            int c2 = get_val(op2, &v2);
+            int c2 = (tok == 4) && get_val(op2, &v2);
 
             if (c1) {
                 sprintf(op1, "%d", v1);
@@ -71,7 +74,7 @@ int main(void) {
                 sprintf(op2, "%d", v2);
             }
 
-            if (c1 && c2) {
+            if (tok == 4 && c1 && c2) {
                 int ans = 0;
                 if (op == '+') {
                     ans = v1 + v2;
@@ -82,21 +85,13 @@ int main(void) {
                 } else if (op == '/') {
                     ans = (v2 != 0) ? (v1 / v2) : 0;
                 }
-
                 set_val(lhs, ans, 1);
                 sprintf(res[i], "%s = %d", lhs, ans);
-            } else {
+            } else if (tok == 4) {
                 set_val(lhs, 0, 0);
                 sprintf(res[i], "%s = %s %c %s", lhs, op1, op, op2);
-            }
-        } else if (sscanf(line, "%s = %s", lhs, op1) == 2) {
-            int v1;
-            int c1 = get_val(op1, &v1);
-            if (c1) {
-                set_val(lhs, v1, 1);
-                sprintf(res[i], "%s = %d", lhs, v1);
             } else {
-                set_val(lhs, 0, 0);
+                set_val(lhs, v1, c1);
                 sprintf(res[i], "%s = %s", lhs, op1);
             }
         }

@@ -15,6 +15,7 @@ ALGORITHM:
 */
 
 #include <stdio.h>
+#include <string.h>
 
 int main(void) {
     int n;
@@ -23,25 +24,20 @@ int main(void) {
     printf("Enter TAC statements (e.g. t1 = b + c or a = t2):\n");
     printf("\n--- Generated Target Machine Code ---\n");
 
+    const char *sym = "+-*/";
+    const char *ops[] = {"ADD", "SUB", "MUL", "DIV"};
+
     for (int i = 0; i < n; i++) {
         char lhs[10], op1[10], op2[10], op, line[50];
         scanf(" %[^\n]", line);
 
-        if (sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2) == 4) {
-            char *instr = "ADD";
-            if (op == '-') {
-                instr = "SUB";
-            } else if (op == '*') {
-                instr = "MUL";
-            } else if (op == '/') {
-                instr = "DIV";
+        int k = sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2);
+        if (k == 2 || k == 4) {
+            printf("MOV R0, %s\n", op1);
+            if (k == 4) {
+                const char *p = strchr(sym, op);
+                printf("%s R0, %s\n", ops[p ? p - sym : 0], op2);
             }
-
-            printf("MOV R0, %s\n", op1);
-            printf("%s R0, %s\n", instr, op2);
-            printf("MOV %s, R0\n\n", lhs);
-        } else if (sscanf(line, "%s = %s", lhs, op1) == 2) {
-            printf("MOV R0, %s\n", op1);
             printf("MOV %s, R0\n\n", lhs);
         }
     }

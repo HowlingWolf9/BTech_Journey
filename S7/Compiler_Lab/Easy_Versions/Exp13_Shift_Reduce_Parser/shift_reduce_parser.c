@@ -25,9 +25,9 @@ ALGORITHM:
 #include <string.h>
 
 char s[50] = "$", in[50];
-int top = 0, ip = 0;
+int ip = 0;
 
-void print(char *act) {
+void print(const char *act) {
     printf("%-15s %-15s %s\n", s, in + ip, act);
 }
 
@@ -40,33 +40,26 @@ int main(void) {
     printf("--------------------------------------------\n");
 
     while (1) {
-        if (s[top] == 'i') {
-            s[top] = 'E';
+        int len = strlen(s);
+        char *top3 = s + (len >= 3 ? len - 3 : 0);
+
+        if (s[len - 1] == 'i') {
+            s[len - 1] = 'E';
             print("Reduce: E -> i");
-        } else if (top >= 2 && s[top - 2] == '(' && s[top - 1] == 'E' && s[top] == ')') {
-            top -= 2;
-            s[top] = 'E';
-            s[top + 1] = '\0';
-            print("Reduce: E -> (E)");
-        } else if (top >= 2 && s[top - 2] == 'E' && s[top - 1] == '*' && s[top] == 'E') {
-            top -= 2;
-            s[top] = 'E';
-            s[top + 1] = '\0';
-            print("Reduce: E -> E*E");
-        } else if (top >= 2 && s[top - 2] == 'E' && s[top - 1] == '+' && s[top] == 'E' && in[ip] != '*') {
-            top -= 2;
-            s[top] = 'E';
-            s[top + 1] = '\0';
-            print("Reduce: E -> E+E");
+        } else if (!strcmp(top3, "(E)") || !strcmp(top3, "E*E") ||
+                   (!strcmp(top3, "E+E") && in[ip] != '*')) {
+            char act[20];
+            sprintf(act, "Reduce: E -> %.3s", top3);
+            strcpy(top3, "E");
+            print(act);
         } else if (!strcmp(s, "$E") && in[ip] == '$') {
-            printf("%-15s %-15s ACCEPT\n", s, in + ip);
+            print("ACCEPT");
             break;
         } else if (in[ip] == '$') {
             printf("REJECT\n");
             break;
         } else {
-            s[++top] = in[ip++];
-            s[top + 1] = '\0';
+            strncat(s, in + ip++, 1);
             print("SHIFT");
         }
     }

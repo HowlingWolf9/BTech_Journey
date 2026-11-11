@@ -5,10 +5,10 @@ ALGORITHM:
 1. Open the source file "input.c" in read mode.
 2. Read characters one by one until EOF:
    a. If whitespace, ignore and continue.
-   b. If an alphabet or '_', accumulate characters into buffer:
+   b. If an alphabet or '_', push back with ungetc() and read identifier via fscanf():
       - Match against standard C keyword string using strstr().
       - If matched, display as Keyword; otherwise as Identifier.
-   c. If a digit, accumulate consecutive digits into buffer and display as Constant.
+   c. If a digit, push back with ungetc(), read digits via fscanf(), and display as Constant.
    d. If character is found in +, -, *, /, =, <, >, display as Operator.
    e. If character matches ";,(){}", display as Delimiter.
 3. Close the input file and terminate.
@@ -31,27 +31,15 @@ int main(void) {
         }
 
         if (isalpha(c) || c == '_') {
-            int i = 0;
-            buf[i++] = c;
-            while (isalnum(c = fgetc(fp)) || c == '_') {
-                buf[i++] = c;
-            }
-            buf[i] = '\0';
             ungetc(c, fp);
-
+            fscanf(fp, "%49[a-zA-Z0-9_]", buf);
             sprintf(t, " %s ", buf);
             char *kw = " int float char if else while return void ";
             char *token = strstr(kw, t) ? "Keyword" : "Identifier";
             printf("%-15s %s\n", buf, token);
         } else if (isdigit(c)) {
-            int i = 0;
-            buf[i++] = c;
-            while (isdigit(c = fgetc(fp))) {
-                buf[i++] = c;
-            }
-            buf[i] = '\0';
             ungetc(c, fp);
-
+            fscanf(fp, "%49[0-9]", buf);
             printf("%-15s Constant\n", buf);
         } else if (strchr("+-*/=<>", c)) {
             printf("%-15c Operator\n", c);

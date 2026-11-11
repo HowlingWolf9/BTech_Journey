@@ -19,13 +19,21 @@ ALGORITHM:
 #include <ctype.h>
 
 struct Quad {
-    char op[5];
+    char op;
     char a1[10];
     char a2[10];
     char res[10];
 } q[50];
 
 int qcnt = 0;
+
+void emit(char op, const char *a1, const char *a2, const char *res) {
+    q[qcnt].op = op;
+    strcpy(q[qcnt].a1, a1);
+    strcpy(q[qcnt].a2, a2);
+    strcpy(q[qcnt].res, res);
+    qcnt++;
+}
 
 int prec(char c) {
     if (c == '+' || c == '-') {
@@ -38,14 +46,9 @@ int prec(char c) {
 }
 
 int main(void) {
-    char in[100], lhs[20], rhs[100], post[100];
+    char lhs[20], rhs[100], post[100];
     printf("Enter expression (e.g. x = a + b * c): ");
-    scanf(" %[^\n]", in);
-
-    char *eq = strchr(in, '=');
-    *eq = '\0';
-    sscanf(in, "%s", lhs);
-    strcpy(rhs, eq + 1);
+    scanf(" %[^= \t] = %[^\n]", lhs, rhs);
 
     char stk[100];
     int top = -1;
@@ -94,28 +97,19 @@ int main(void) {
             sprintf(tmp, "t%d", t++);
             printf("%s = %s %c %s\n", tmp, op1, c, op2);
 
-            sprintf(q[qcnt].op, "%c", c);
-            strcpy(q[qcnt].a1, op1);
-            strcpy(q[qcnt].a2, op2);
-            strcpy(q[qcnt].res, tmp);
-            qcnt++;
-
+            emit(c, op1, op2, tmp);
             strcpy(ostk[++otop], tmp);
         }
     }
 
     printf("%s = %s\n", lhs, ostk[otop]);
-    strcpy(q[qcnt].op, "=");
-    strcpy(q[qcnt].a1, ostk[otop]);
-    strcpy(q[qcnt].a2, "-");
-    strcpy(q[qcnt].res, lhs);
-    qcnt++;
+    emit('=', ostk[otop], "-", lhs);
 
     printf("\n--- Quadruple Table ---\n");
     printf("%-6s %-10s %-10s %-10s %-10s\n", "Index", "Operator", "Argument 1", "Argument 2", "Result");
     printf("----------------------------------------------------\n");
     for (int i = 0; i < qcnt; i++) {
-        printf("%-6d %-10s %-10s %-10s %-10s\n", i, q[i].op, q[i].a1, q[i].a2, q[i].res);
+        printf("%-6d %-10c %-10s %-10s %-10s\n", i, q[i].op, q[i].a1, q[i].a2, q[i].res);
     }
     return 0;
 }

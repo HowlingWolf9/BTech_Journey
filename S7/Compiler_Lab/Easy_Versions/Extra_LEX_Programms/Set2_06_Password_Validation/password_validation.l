@@ -5,40 +5,27 @@ SET 2 - PROGRAM 06: LEX PROGRAM FOR PASSWORD VALIDATION (EASY VERSION)
 ALGORITHM:
 1. Define Lex regular expression to match password: [^\n]+.
 2. In the rule action:
-   - Check password criteria:
+   - Check password criteria using yyleng and strpbrk():
      * Length must be >= 8.
-     * Must contain at least one uppercase letter (isupper).
-     * Must contain at least one lowercase letter (islower).
-     * Must contain at least one digit (isdigit).
+     * Must contain at least one uppercase letter.
+     * Must contain at least one lowercase letter.
+     * Must contain at least one digit.
    - If all conditions are satisfied, print "Valid Password"; otherwise print "Invalid Password".
    - Return 0 to stop scanning.
 3. In main(), prompt user for password, call yylex(), and terminate.
 */
 #include <stdio.h>
-#include <ctype.h>
+#include <string.h>
 %}
 
 %option noyywrap
 
 %%
 [^\n]+  {
-    int u = 0;
-    int l = 0;
-    int d = 0;
-
-    for (int i = 0; yytext[i]; i++) {
-        if (isupper(yytext[i])) {
-            u = 1;
-        }
-        if (islower(yytext[i])) {
-            l = 1;
-        }
-        if (isdigit(yytext[i])) {
-            d = 1;
-        }
-    }
-
-    if (yyleng >= 8 && u && l && d) {
+    if (yyleng >= 8 &&
+        strpbrk(yytext, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") &&
+        strpbrk(yytext, "abcdefghijklmnopqrstuvwxyz") &&
+        strpbrk(yytext, "0123456789")) {
         printf("Valid Password\n");
     } else {
         printf("Invalid Password\n");

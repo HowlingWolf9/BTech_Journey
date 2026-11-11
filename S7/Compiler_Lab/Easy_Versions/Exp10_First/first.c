@@ -21,9 +21,7 @@ char p[20][20];
 
 void add(char *s, char c) {
     if (!strchr(s, c)) {
-        int l = strlen(s);
-        s[l] = c;
-        s[l+1] = 0;
+        strncat(s, &c, 1);
     }
 }
 
