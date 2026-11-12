@@ -2,23 +2,18 @@
 EXPERIMENT 13: SHIFT REDUCE PARSER (EASY VERSION)
 
 ALGORITHM:
-1. Define the grammar:
-   E -> E + E
-   E -> E * E
-   E -> ( E )
-   E -> i
-2. Initialize stack with "$" and append "$" to input string.
+1. Store the 4 grammar reduction rules (rhs, len) in a struct table:
+   {"i", 1}, {"(E)", 3}, {"E*E", 3}, {"E+E", 3}.
+2. Initialize stack with "$" and append "$" to the input string.
 3. In a loop:
-   a. Check for reduction conditions on the stack top:
-      - If top matches 'i', reduce to 'E'.
-      - If top matches "(E)", reduce to 'E'.
-      - If top matches "E*E", reduce to 'E'.
-      - If top matches "E+E" and next input symbol is not '*', reduce to 'E'.
-   b. If reduction occurs, print stack, input, and "Reduce: ...", then continue.
-   c. If no reduction:
+   a. Check the rule table in order for a suffix matching the stack top,
+      deferring "E+E" when the next input symbol is '*' for precedence.
+   b. If a rule matches, replace the matched suffix on the stack with "E",
+      print the Reduce action, and continue.
+   c. If no reduction applies:
       - If stack is "$E" and input is "$", print "ACCEPT" and terminate.
       - If input is "$", print "REJECT" and terminate.
-      - Otherwise, SHIFT next input symbol onto stack and print "SHIFT".
+      - Otherwise, SHIFT the next input symbol onto the stack and print "SHIFT".
 */
 
 #include <stdio.h>
@@ -32,6 +27,11 @@ void print(const char *act) {
 }
 
 int main(void) {
+    struct {
+        const char *rhs;
+        int len;
+    } r[] = {{"i", 1}, {"(E)", 3}, {"E*E", 3}, {"E+E", 3}};
+
     printf("Enter input string (e.g. i+i*i): ");
     scanf("%s", in);
     strcat(in, "$");
@@ -40,19 +40,22 @@ int main(void) {
     printf("--------------------------------------------\n");
 
     while (1) {
-        int len = strlen(s);
-        char *top3 = s + (len >= 3 ? len - 3 : 0);
+        int l = (int)strlen(s), red = 0;
 
-        if (s[len - 1] == 'i') {
-            s[len - 1] = 'E';
-            print("Reduce: E -> i");
-        } else if (!strcmp(top3, "(E)") || !strcmp(top3, "E*E") ||
-                   (!strcmp(top3, "E+E") && in[ip] != '*')) {
-            char act[20];
-            sprintf(act, "Reduce: E -> %.3s", top3);
-            strcpy(top3, "E");
-            print(act);
-        } else if (!strcmp(s, "$E") && in[ip] == '$') {
+        for (int i = 0; i < 4 && !red; i++) {
+            if (l >= r[i].len && !strcmp(s + l - r[i].len, r[i].rhs) &&
+                !(i == 3 && in[ip] == '*')) {
+                char act[20];
+                strcpy(s + l - r[i].len, "E");
+                sprintf(act, "Reduce: E -> %s", r[i].rhs);
+                print(act);
+                red = 1;
+            }
+        }
+        if (red) {
+            continue;
+        }
+        if (!strcmp(s, "$E") && in[ip] == '$') {
             print("ACCEPT");
             break;
         } else if (in[ip] == '$') {

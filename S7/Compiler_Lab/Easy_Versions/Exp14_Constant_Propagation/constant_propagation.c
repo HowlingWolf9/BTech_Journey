@@ -2,79 +2,57 @@
 EXPERIMENT 14: CONSTANT PROPAGATION (EASY VERSION)
 
 ALGORITHM:
-1. Maintain a symbol table of variable names and their known constant values.
+1. Maintain a struct table s[20] storing each statement's LHS variable (k),
+   known constant value string (v), and formatted output line (out).
 2. Read n Three-Address Code statements of the form LHS = RHS:
-   - Statements can be simple assignments (lhs = op1) or binary expressions (lhs = op1 op op2).
-3. For each statement:
-   a. Look up op1 and op2 in the constant table; substitute if known (Constant Propagation).
-   b. If both operands evaluate to constants, perform the operation at compile time (Constant Folding) and record LHS as a constant.
-   c. If a single constant is assigned, record LHS as a constant.
-   d. Otherwise, invalidate LHS in the constant table.
-4. Display the resulting optimized statements.
+   - Simple assignments (lhs = op1) or binary expressions (lhs = op1 op op2).
+3. For each statement i:
+   a. Scan earlier entries j < i: propagate any known constant s[j].v into op1/op2,
+      and clear s[j].v if s[i].k redefines s[j].k.
+   b. If a binary expression has two integer operands, fold the arithmetic result
+      into op1 and reduce the statement to a simple assignment.
+   c. If the RHS of a simple assignment is an integer constant, store it in s[i].v;
+      format the optimized statement into s[i].out.
+4. Display all optimized statements s[i].out.
 */
 
 #include <stdio.h>
 #include <string.h>
 
-char vars[20][10];
-int vals[20], is_c[20], n_vars = 0;
-
-int find_var(char *s) {
-    for (int i = 0; i < n_vars; i++) {
-        if (!strcmp(vars[i], s)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int get_val(char *s, int *v) {
-    if (sscanf(s, "%d", v) == 1) {
-        return 1;
-    }
-    int idx = find_var(s);
-    if (idx >= 0 && is_c[idx]) {
-        *v = vals[idx];
-        return 1;
-    }
-    return 0;
-}
-
-void set_val(char *s, int v, int c) {
-    int idx = find_var(s);
-    if (idx < 0) {
-        idx = n_vars++;
-        strcpy(vars[idx], s);
-    }
-    vals[idx] = v;
-    is_c[idx] = c;
-}
-
 int main(void) {
+    struct {
+        char k[10], v[16], out[50];
+    } s[20];
     int n;
+
     printf("Enter number of statements: ");
     scanf("%d", &n);
     printf("Enter TAC statements (e.g. a = 5, c = a + b):\n");
 
-    char res[20][50];
     for (int i = 0; i < n; i++) {
-        char line[50], lhs[10], op1[16], op2[16], op;
+        char line[50], op1[16] = "", op2[16] = "", op = 0;
+        *s[i].k = *s[i].v = *s[i].out = 0;
         scanf(" %[^\n]", line);
 
-        int tok = sscanf(line, "%s = %s %c %s", lhs, op1, &op, op2);
+        int tok = sscanf(line, "%s = %s %c %s", s[i].k, op1, &op, op2);
         if (tok == 2 || tok == 4) {
+            for (int j = 0; j < i; j++) {
+                if (*s[j].v) {
+                    if (!strcmp(op1, s[j].k)) {
+                        strcpy(op1, s[j].v);
+                    }
+                    if (!strcmp(op2, s[j].k)) {
+                        strcpy(op2, s[j].v);
+                    }
+                }
+                if (!strcmp(s[i].k, s[j].k)) {
+                    *s[j].v = 0;
+                }
+            }
+
             int v1 = 0, v2 = 0;
-            int c1 = get_val(op1, &v1);
-            int c2 = (tok == 4) && get_val(op2, &v2);
-
-            if (c1) {
-                sprintf(op1, "%d", v1);
-            }
-            if (c2) {
-                sprintf(op2, "%d", v2);
-            }
-
-            if (tok == 4 && c1 && c2) {
+            if (tok == 4 && sscanf(op1, "%d", &v1) == 1 &&
+                sscanf(op2, "%d", &v2) == 1) {
                 int ans = 0;
                 if (op == '+') {
                     ans = v1 + v2;
@@ -82,24 +60,28 @@ int main(void) {
                     ans = v1 - v2;
                 } else if (op == '*') {
                     ans = v1 * v2;
-                } else if (op == '/') {
-                    ans = (v2 != 0) ? (v1 / v2) : 0;
+                } else if (op == '/' && v2 != 0) {
+                    ans = v1 / v2;
                 }
-                set_val(lhs, ans, 1);
-                sprintf(res[i], "%s = %d", lhs, ans);
-            } else if (tok == 4) {
-                set_val(lhs, 0, 0);
-                sprintf(res[i], "%s = %s %c %s", lhs, op1, op, op2);
-            } else {
-                set_val(lhs, v1, c1);
-                sprintf(res[i], "%s = %s", lhs, op1);
+                sprintf(op1, "%d", ans);
+                tok = 2;
             }
+
+            if (tok == 2) {
+                if (sscanf(op1, "%d", &v1) == 1) {
+                    strcpy(s[i].v, op1);
+                }
+                sprintf(line, "%s = %s", s[i].k, op1);
+            } else {
+                sprintf(line, "%s = %s %c %s", s[i].k, op1, op, op2);
+            }
+            strcpy(s[i].out, line);
         }
     }
 
     printf("\n--- Optimized Code (Constant Propagation & Folding) ---\n");
     for (int i = 0; i < n; i++) {
-        printf("%s\n", res[i]);
+        printf("%s\n", s[i].out);
     }
     return 0;
 }

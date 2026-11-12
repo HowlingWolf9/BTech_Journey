@@ -2,14 +2,13 @@
 EXPERIMENT 10: FIND FIRST OF ANY GRAMMAR (EASY VERSION)
 
 ALGORITHM:
-1. Read number of productions n and grammar productions of the form A=alpha (use '#' for epsilon).
-2. For each non-terminal c:
-   - If c is terminal, FIRST(c) = {c}.
-   - If c -> Y1 Y2 ... Yk:
-     * Add all non-epsilon symbols from FIRST(Y1) to FIRST(c).
-     * If FIRST(Y1) contains '#', continue with Y2, and so on.
-     * If all symbols derive '#', add '#' to FIRST(c).
-3. Compute and display the FIRST set for each unique non-terminal.
+1. Read number of productions n and store each production A=alpha ('#' for epsilon) in p[i].lhs and p[i].rhs.
+2. Define add(s, c) to append unique characters to set string s using strchr() and strncat().
+3. Define string-based first(s, res):
+   - Scan symbols *s in s; if !isupper(*s), add *s to res and return.
+   - Otherwise collect FIRST(p[i].rhs) into sub for all productions with p[i].lhs == *s, add non-'#' symbols to res, and return if '#' is absent from sub.
+   - If all symbols derive '#' (or s is empty), add '#' to res.
+4. For each unique non-terminal nt (p[i].lhs), call first((char[]){nt, 0}, res) and display FIRST(nt).
 */
 
 #include <stdio.h>
@@ -17,7 +16,9 @@ ALGORITHM:
 #include <string.h>
 
 int n;
-char p[20][20];
+struct {
+    char lhs, rhs[20];
+} p[20];
 
 void add(char *s, char c) {
     if (!strchr(s, c)) {
@@ -25,47 +26,50 @@ void add(char *s, char c) {
     }
 }
 
-void first(char c, char *res) {
-    if (!isupper(c)) {
-        add(res, c);
-        return;
-    }
-    for (int i = 0; i < n; i++) {
-        if (p[i][0] == c) {
-            char *rhs = strchr(p[i], '=');
-            for (char *r = rhs ? rhs + 1 : p[i] + 2; *r; r++) {
-                char sub[20] = "";
-                first(*r, sub);
-                for (int k = 0; sub[k]; k++)
-                    if (sub[k] != '#')
-                        add(res, sub[k]);
-                if (!strchr(sub, '#'))
-                    break;
-                if (!r[1])
-                    add(res, '#');
+void first(char *s, char *res) {
+    for (; *s; s++) {
+        if (!isupper(*s)) {
+            add(res, *s);
+            return;
+        }
+        char sub[20] = "";
+        for (int i = 0; i < n; i++) {
+            if (p[i].lhs == *s) {
+                first(p[i].rhs, sub);
             }
         }
+        for (int k = 0; sub[k]; k++) {
+            if (sub[k] != '#') {
+                add(res, sub[k]);
+            }
+        }
+        if (!strchr(sub, '#')) {
+            return;
+        }
     }
+    add(res, '#');
 }
 
 int main(void) {
     printf("Enter number of productions: ");
     scanf("%d", &n);
     printf("Enter productions (e.g. E=TR, # for eps):\n");
-    for (int i = 0; i < n; i++)
-        scanf("%s", p[i]);
+    for (int i = 0; i < n; i++) {
+        scanf(" %c=%s", &p[i].lhs, p[i].rhs);
+    }
 
     printf("\nFIRST Sets:\n");
     char done[20] = "";
     for (int i = 0; i < n; i++) {
-        char nt = p[i][0];
+        char nt = p[i].lhs;
         if (!strchr(done, nt)) {
             add(done, nt);
             char res[20] = "";
-            first(nt, res);
+            first((char[]){nt, 0}, res);
             printf("FIRST(%c) = { ", nt);
-            for (int k = 0; res[k]; k++)
-                printf("%c%s", res[k], res[k+1] ? ", " : "");
+            for (int k = 0; res[k]; k++) {
+                printf("%c%s", res[k], res[k + 1] ? ", " : "");
+            }
             printf(" }\n");
         }
     }
