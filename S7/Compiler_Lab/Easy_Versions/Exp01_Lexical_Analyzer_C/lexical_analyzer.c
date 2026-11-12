@@ -35,8 +35,7 @@ int main(void) {
             fscanf(fp, "%49[a-zA-Z0-9_]", buf);
             sprintf(t, " %s ", buf);
             char *kw = " int float char if else while return void ";
-            char *token = strstr(kw, t) ? "Keyword" : "Identifier";
-            printf("%-15s %s\n", buf, token);
+            printf("%-15s %s\n", buf, strstr(kw, t) ? "Keyword" : "Identifier");
         } else if (isdigit(c)) {
             ungetc(c, fp);
             fscanf(fp, "%49[0-9]", buf);
